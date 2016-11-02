@@ -2,4 +2,4 @@
 
 #BATCHARGS
 
-OMP_NUM_THREADS=1 ./laplace2d_omp
+OMP_NUM_THREADS=4 ./laplace2d_omp

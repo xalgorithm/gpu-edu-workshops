@@ -40,7 +40,9 @@ int main()
 
   checkCUDA( cudaMalloc( (void **) &d_a, size ) );
 /* enter code here to malloc d_b and d_c */
-  FIXME
+
+  checkCUDA( cudaMalloc( (void **) &d_b, size ) );
+  checkCUDA( cudaMalloc( (void **) &d_c, size ) );
 
 /* zero out the device memory for C */
 
@@ -56,11 +58,9 @@ int main()
 
   checkCUDA( cudaMemcpy( d_a, &a, size, cudaMemcpyHostToDevice ) );
 /* enter code here to copy d_b to device */
-  FIXME
-
+  checkCUDA(cudaMemcpy( d_b, &c, size, cudaMemcpyHostToDevice) );
 /* enter code here to launch the kernel on the GPU */
-  FIXME
-
+  add<<< 2, 1 >>>(d_a,d_b,d_c);
   checkKERNEL()
 
 /* copy result back to host */
@@ -74,9 +74,8 @@ int main()
 /* clean up */
 
   checkCUDA( cudaFree( d_a ) );
-  FIXME
-/* enter code here to cudaFree the d_b and d_c pointers */
-
+  checkCUDA( cudaFree( d_b ) );
+  checkCUDA( cudaFree( d_c ) );
 /* calling reset to check errors */
   checkCUDA( cudaDeviceReset() );
 	
