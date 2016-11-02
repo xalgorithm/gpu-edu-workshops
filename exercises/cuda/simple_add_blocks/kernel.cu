@@ -21,7 +21,7 @@ __global__ void add(int *a, int *b, int *c)
 {
 /* add the proper index so each block calculates a different value in the 
    array  */
-  c[FIXME] = a[FIXME] + b[FIXME];
+  c[blockIdx.x] = a[blockIdx.x] + b[blockIdx.x];
 }
 
 #define N 32
@@ -48,9 +48,9 @@ int main()
 
 /* allocate space for host copies of a, b, c and setup input values */
 
-  a = (int *)malloc( size );
-  b = (int *)malloc( size );
-  c = (int *)malloc( size );
+  checkCUDA(a = (int *)malloc( size ) );
+  checkCUDA(b = (int *)malloc( size ) );
+  checkCUDA(c = (int *)malloc( size ) );
 
   for( int i = 0; i < N; i++ )
   {
@@ -61,8 +61,7 @@ int main()
 /* copy inputs to device */
 
   checkCUDA( cudaMemcpy( d_a, a, size, cudaMemcpyHostToDevice ) );
-/* insert code to copy b to the device */
-  FIXME
+  checkCUDA( cudaMemcpy( d_b, b, size, cudaMemcpyHostToDevice ) );
 
 /* zero out C array */
 
@@ -70,7 +69,7 @@ int main()
 
 /* launch the kernel on the GPU */
 /* finish the kernel launch with N blocks and 1 thread per block */
-  add<<< FIXME, FIXME >>>( d_a, d_b, d_c );
+  add<<< N, 1 >>>( d_a, d_b, d_c );
   checkKERNEL()
 
 /* copy result back to host */
