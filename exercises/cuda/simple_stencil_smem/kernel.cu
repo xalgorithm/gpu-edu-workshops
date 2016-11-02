@@ -18,8 +18,8 @@
 #include "../debug.h"
 
 #define N ( 1024 * 1024 )
-#define RADIUS 5
-#define THREADS_PER_BLOCK 32
+#define RADIUS 7
+#define THREADS_PER_BLOCK 64
 
 /* stencil kernel */
 
@@ -34,7 +34,7 @@ __global__ void stencil_1d(int n, double *in, double *out)
 
 /* return if my global index is larger than the array size */
   if( globalIndex >= n ) return;
-
+  void __syncthreads();
 /* read input elements into shared memory */
   temp[localIndex] = in[globalIndex];
 
@@ -49,7 +49,6 @@ __global__ void stencil_1d(int n, double *in, double *out)
   {
     temp[localIndex + THREADS_PER_BLOCK] = in[globalIndex + THREADS_PER_BLOCK];
   } /* end if */
-	
 /* code to handle the boundary conditions */
   if( globalIndex < RADIUS || globalIndex >= (n - RADIUS) ) 
   {
@@ -58,7 +57,6 @@ __global__ void stencil_1d(int n, double *in, double *out)
   } /* end if */
 
   double result = 0.0;
-
   for( int i = -(RADIUS); i <= (RADIUS); i++ ) 
   {
     result += temp[localIndex + i];
@@ -115,7 +113,6 @@ int main()
   checkCUDA( cudaEventCreate( &start ) );
   checkCUDA( cudaEventCreate( &stop ) );
   checkCUDA( cudaEventRecord( start, 0 ) );
-
 /* launch the kernel on the GPU */
 
   stencil_1d<<< blocks, threads >>>( N, d_in, d_out );

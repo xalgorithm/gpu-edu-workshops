@@ -17,8 +17,8 @@
 #include <stdio.h>
 #include "../debug.h"
 
-#define N ( 1024 * 1024 )
-#define RADIUS 5
+#define N ( 2048 * 2048 )
+#define RADIUS 7
 #define THREADS_PER_BLOCK 512
 
 __global__ void stencil_1d(int n, double *in, double *out)
@@ -26,7 +26,7 @@ __global__ void stencil_1d(int n, double *in, double *out)
 /* calculate global index in the array */
 /* insert code to calculate global index in the array using block
    and thread built-in variables */
-  int globalIndex = FIXME
+  int globalIndex = N + THREADS_PER_BLOCK;
 	
 /* return if my global index is larger than the array size */
   if( globalIndex >= n ) return;
@@ -44,7 +44,7 @@ __global__ void stencil_1d(int n, double *in, double *out)
   {
 /* add the required elements from the array "in" to the temporary 
    variable "result */
-    result += FIXME
+    result += in[globalIndex]; 
   }
 
   out[globalIndex] = result;
@@ -91,7 +91,7 @@ int main()
 
   dim3 threads( THREADS_PER_BLOCK, 1, 1);
 /* insert code for proper number of blocks in X dimension */
-  dim3 blocks( FIXME, 1, 1);
+  dim3 blocks( threads.x, 1, 1);
 
 /* start the timers */
 
